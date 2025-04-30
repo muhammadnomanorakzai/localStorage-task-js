@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <div class="center-box mt-4">
+          <h2 class="text-center mb-4">Welcome to Your Dashboard</h2>
+      
+          <div class="mb-3">
+            <input type="text" class="form-control" id="userInput" placeholder="Enter text (optional)" />
+          </div>
+      
+          <div class="mb-3">
+            <input type="file" class="form-control" id="imageInput" accept="image/*" />
+            <img id="previewImage" class="preview-img d-none" />
+          </div>
+      
+          <button class="btn btn-primary w-100" id="submitBtn">Submit</button>
+          <div class="text-danger mt-2 d-none" id="errorMsg">Please enter text or select an image.</div>
+      
+          <h5 class="mt-4">Your Entries:</h5>
+          <ul class="list-group mt-2" id="entryList"></ul>
+        </div>
+      </div>
+
+      <script>
+    const user = JSON.parse(localStorage.getItem('user'));
+  if (!user) window.location.href = 'login.html';
+  else document.getElementById('welcomeUser').innerText = `Welcome, ${user.name}`;
+
+  const inputField = document.getElementById('userInput');
+  const imageInput = document.getElementById('imageInput');
+  const previewImage = document.getElementById('previewImage');
+  const errorMsg = document.getElementById('errorMsg');
+  const submitBtn = document.getElementById('submitBtn');
+  const entryList = document.getElementById('entryList');
+
+  // Preview image
+  imageInput.addEventListener('change', () => {
+    const file = imageInput.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImage.src = e.target.result;
+        previewImage.classList.remove("d-none");
+      };
+      reader.readAsDataURL(file);
+    } else {
+      previewImage.classList.add("d-none");
+    }
+  });
+
+  // Load user-specific entries
+  function loadUserEntries() {
+    const entries = JSON.parse(localStorage.getItem('entries')) || [];
+    const userEntries = entries.filter((item) => item.email === user.email);
+
+    entryList.innerHTML = "";
+    userEntries.forEach((item, index) => {
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between align-items-start flex-column flex-md-row';
+
+      let content = '';
+      if (item.text) content += `<p class="mb-1">${item.text}</p>`;
+      if (item.image) content += `<img src="${item.image}" class="entry-image img-fluid rounded" />`;
+
+      li.innerHTML = `
+        <div class="flex-grow-1">
+          ${content}
+        </div>
+        <div>
+          <button class="btn btn-sm btn-danger mt-2 mt-md-0 ms-md-3" onclick="deleteEntry(${index})">Delete</button>
+        </div>
+      `;
+
+      entryList.appendChild(li);
+    });
+  }
+
+  // Submit entry
+  submitBtn.addEventListener('click', () => {
+    const text = inputField.value.trim();
+    const file = imageInput.files[0];
+
+    if (!text && !file) {
+      errorMsg.classList.remove('d-none');
+      return;
+    }
+
+    errorMsg.classList.add('d-none');
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        saveEntry(text, e.target.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      saveEntry(text, null);
+    }
+
+    inputField.value = "";
+    imageInput.value = "";
+    previewImage.classList.add("d-none");
+  });
+
+  function saveEntry(text, image) {
+    const entry = { text, image, email: user.email };
+    const allEntries = JSON.parse(localStorage.getItem('entries')) || [];
+    allEntries.push(entry);
+    localStorage.setItem('entries', JSON.stringify(allEntries));
+    loadUserEntries();
+  }
+
+  function deleteEntry(indexToDelete) {
+    let allEntries = JSON.parse(localStorage.getItem('entries')) || [];
+    // Filter only this user’s entries to get actual matching index
+    const userEntries = allEntries.filter(entry => entry.email === user.email);
+    const entryToDelete = userEntries[indexToDelete];
+
+    allEntries = allEntries.filter(
+      entry => !(entry.email === entryToDelete.email && entry.text === entryToDelete.text && entry.image === entryToDelete.image)
+    );
+
+    localStorage.setItem('entries', JSON.stringify(allEntries));
+    loadUserEntries();
+  }
+
+  function logout() {
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+  }
+
+  loadUserEntries();
+      </script>
+    
+</body>
+</html>
