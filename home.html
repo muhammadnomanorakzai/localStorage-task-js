@@ -1,211 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>Home</title>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-  <style>
-    body {
-      min-height: 100vh;
-      margin: 0;
-      background: linear-gradient(120deg, #6e8efb, #a777e3);
-      background-size: 400% 400%;
-      animation: bgGradient 10s ease infinite;
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    @keyframes bgGradient {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .dashboard {
-      background: white;
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-      animation: fadeIn 1s ease;
-      animation-delay: 0.2s;
-    }
-
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: scale(0.95); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    h1 span {
-      color: #6e8efb;
-    }
-
-    #taskInput {
-      border-radius: 12px;
-    }
-
-    .btn-primary {
-      background-color: #6e8efb;
-      border: none;
-      transition: 0.3s ease;
-    }
-
-    .btn-primary:hover {
-      background-color: #5a7dfb;
-    }
-
-    .list-group-item {
-      border-radius: 8px;
-      margin-top: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .delete-btn {
-      background-color: transparent;
-      border: none;
-      font-size: 1.2rem;
-      color: #dc3545;
-      cursor: pointer;
-    }
-
-    .btn-danger {
-      border-radius: 8px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="dashboard col-12 col-md-10 col-lg-8 text-center">
-        <h1>Welcome, <span id="userName"></span></h1>
-        <p class="text-muted">You are logged in successfully!</p>
-
-        <div>
-          <h4 class="mb-3">Create a Task</h4>
-          <div class="mb-3">
-            <input type="text" id="taskInput" class="form-control" placeholder="Enter your task here...">
-          </div>
-          <button class="btn btn-primary w-100" onclick="addTask()">Add Task</button>
-
-          <h5 class="mt-4">Your Tasks:</h5>
-          <ul class="list-group text-start" id="taskList"></ul>
-        </div>
-
-        <button class="btn btn-danger mt-5 " onclick="logout()">Logout</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script>
-    const loggedIn = localStorage.getItem("loggedIn");
-    if (loggedIn !== "true") {
-      location.replace("login.html");
-    }
-
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    document.getElementById("userName").textContent = currentUser.FullName || currentUser.Email;
-
-    function logout() {
-      localStorage.removeItem("loggedIn");
-      localStorage.removeItem("currentUser");
-      window.location.href = "login.html";
-    }
-
-    function addTask() {
-      const taskInput = document.getElementById("taskInput");
-      const taskText = taskInput.value.trim();
-      if (!taskText) {
-        Swal.fire({
-          icon: 'warning',
-          title: 'Empty Task!',
-          text: 'Please enter a task before submitting.',
-          confirmButtonColor: '#6e8efb'
-        });
-        return;
+  <head>
+    <title>Home</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+    <style>
+      body {
+        min-height: 100vh;
+        margin: 0;
+        background: linear-gradient(120deg, #6e8efb, #a777e3);
+        background-size: 400% 400%;
+        animation: bgGradient 10s ease infinite;
+        font-family: "Segoe UI", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
       }
 
-      const newTask = {
-        title: taskText,
-        email: currentUser.Email
-      };
-
-      const allTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-      allTasks.push(newTask);
-      localStorage.setItem("tasks", JSON.stringify(allTasks));
-
-      Swal.fire({
-        icon: 'success',
-        title: 'Task Added!',
-        text: 'Your task has been saved successfully.',
-        confirmButtonColor: '#6e8efb',
-        showClass: { popup: 'animate__animated animate__fadeInDown' },
-        hideClass: { popup: 'animate__animated animate__fadeOutUp' }
-      });
-
-      taskInput.value = "";
-      showTasks();
-    }
-
-    function deleteTask(index) {
-      Swal.fire({
-        title: 'Are you sure?',
-        text: "This task will be deleted!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, delete it!'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          const allTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-          const userTasks = allTasks.filter(task => task.email === currentUser.Email);
-          const taskToDelete = userTasks[index];
-
-          const updatedTasks = allTasks.filter(task =>
-            !(task.email === currentUser.Email && task.title === taskToDelete.title)
-          );
-
-          localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-          showTasks();
-
-          Swal.fire({
-            title: 'Deleted!',
-            text: 'Your task has been removed.',
-            icon: 'success',
-            confirmButtonColor: '#6e8efb'
-          });
+      @keyframes bgGradient {
+        0% {
+          background-position: 0% 50%;
         }
-      });
-    }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
 
-    function showTasks() {
-      const taskList = document.getElementById("taskList");
-      taskList.innerHTML = "";
+      .dashboard {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        animation: fadeIn 1s ease;
+        animation-delay: 0.2s;
+      }
 
-      const allTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-      const userTasks = allTasks.filter(task => task.email === currentUser.Email);
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
 
-      userTasks.forEach((task, index) => {
-        const li = document.createElement("li");
-        li.className = "list-group-item";
-        li.innerHTML = `
-          ${task.title}
-          <button class="delete-btn" onclick="deleteTask(${index})" title="Delete Task">🗑️</button>
+      h1 span {
+        color: #6e8efb;
+      }
+
+      #taskInput {
+        border-radius: 12px;
+      }
+
+      .btn-primary {
+        background-color: #6e8efb;
+        border: none;
+        transition: 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background-color: #5a7dfb;
+      }
+
+      .list-group-item {
+        border-radius: 8px;
+        margin-top: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .delete-btn {
+        background-color: transparent;
+        border: none;
+        font-size: 1.2rem;
+        color: #dc3545;
+        cursor: pointer;
+      }
+
+      .btn-danger {
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="dashboard col-12 col-md-10 col-lg-8 text-center">
+          <h1>Welcome, <span id="userName"></span></h1>
+          <p class="text-muted">You are logged in successfully!</p>
+
+          <div>
+            <h4 class="mb-3">Create a Task</h4>
+            <div class="mb-3">
+              <input
+                type="text"
+                id="taskInput"
+                class="form-control"
+                placeholder="Enter your task here..."
+              />
+            </div>
+            <button class="btn btn-primary w-100" onclick="addTask()">
+              Add Task
+            </button>
+
+            <h5 class="mt-4">Your Tasks:</h5>
+            <ul class="list-group text-start" id="taskList"></ul>
+          </div>
+
+          <button class="btn btn-danger mt-5" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      const loggedIn = localStorage.getItem("loggedIn");
+      if (loggedIn !== "true") {
+        location.replace("login.html");
+      }
+
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      document.getElementById("userName").textContent =
+        currentUser.FullName || currentUser.Email;
+
+      function logout() {
+        localStorage.removeItem("loggedIn");
+        localStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+      }
+
+      function addTask() {
+        const taskInput = document.getElementById("taskInput");
+        const taskText = taskInput.value.trim();
+        if (!taskText) {
+          Swal.fire({
+            icon: "warning",
+            title: "Empty Task!",
+            text: "Please enter a task before submitting.",
+            confirmButtonColor: "#6e8efb",
+          });
+          return;
+        }
+
+        const newTask = {
+          title: taskText,
+          iscompleted: false,
+          createdBy: {
+            FullName: currentUser.FullName,
+            email: currentUser.Email,
+          },
+        };
+
+        const allTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        allTasks.push(newTask);
+        localStorage.setItem("tasks", JSON.stringify(allTasks));
+
+        Swal.fire({
+          icon: "success",
+          title: "Task Added!",
+          text: "Your task has been saved successfully.",
+          confirmButtonColor: "#6e8efb",
+        });
+
+        taskInput.value = "";
+        showTasks();
+      }
+
+      function deleteTask(index) {
+        Swal.fire({
+          title: "Are you sure?",
+          text: "This task will be deleted!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#dc3545",
+          cancelButtonColor: "#6c757d",
+          confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const allTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            const userTasks = allTasks.filter(
+              (task) => task.createdBy.email === currentUser.Email
+            );
+            const taskToDelete = userTasks[index];
+
+            const updatedTasks = allTasks.filter(
+              (task) =>
+                !(
+                  task.title === taskToDelete.title &&
+                  task.createdBy.email === currentUser.Email
+                )
+            );
+
+            localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+            showTasks();
+
+            Swal.fire({
+              title: "Deleted!",
+              text: "Your task has been removed.",
+              icon: "success",
+              confirmButtonColor: "#6e8efb",
+            });
+          }
+        });
+      }
+
+      function editTask(index) {
+        const allTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        const userTasks = allTasks.filter(
+          (task) => task.createdBy.email === currentUser.Email
+        );
+        const taskToEdit = userTasks[index];
+
+        Swal.fire({
+          title: "Edit Task",
+          input: "text",
+          inputValue: taskToEdit.title,
+          showCancelButton: true,
+          confirmButtonText: "Save",
+          confirmButtonColor: "#6e8efb",
+        }).then((result) => {
+          if (result.isConfirmed && result.value.trim() !== "") {
+            const newTitle = result.value.trim();
+
+            const targetIndex = allTasks.findIndex(
+              (task) =>
+                task.title === taskToEdit.title &&
+                task.createdBy.email === currentUser.Email
+            );
+
+            if (targetIndex !== -1) {
+              allTasks[targetIndex].title = newTitle;
+              localStorage.setItem("tasks", JSON.stringify(allTasks));
+              showTasks();
+
+              Swal.fire({
+                icon: "success",
+                title: "Updated!",
+                text: "Your task has been updated.",
+                confirmButtonColor: "#6e8efb",
+              });
+            }
+          }
+        });
+      }
+
+      function showTasks() {
+        const taskList = document.getElementById("taskList");
+        taskList.innerHTML = "";
+
+        const allTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+        const userTasks = allTasks.filter(
+          (task) => task.createdBy.email === currentUser.Email
+        );
+
+        userTasks.forEach((task, index) => {
+          const li = document.createElement("li");
+          li.className = "list-group-item";
+          li.innerHTML = `
+          <span class="task-title">${task.title}</span>
+          <div>
+            <button class="btn btn-sm btn-outline-secondary me-2" onclick="editTask(${index})" title="Edit Task">✏️</button>
+            <button class="delete-btn" onclick="deleteTask(${index})" title="Delete Task">🗑️</button>
+          </div>
         `;
-        taskList.appendChild(li);
-      });
-    }
+          taskList.appendChild(li);
+        });
+      }
 
-    showTasks();
-  </script>
-</body>
+      showTasks();
+    </script>
+  </body>
 </html>
