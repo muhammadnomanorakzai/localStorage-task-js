@@ -1,0 +1,126 @@
+body {
+  height: 100vh;
+  margin: 0;
+  background: linear-gradient(-45deg, #6e8efb, #a777e3, #fcb045, #ff6b6b);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  padding-top: 70px;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes slideFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar-color {
+  background-color: #046169;
+  color: white;
+}
+.text-color {
+  color: rgb(55, 235, 55);
+}
+.username-fize {
+  font-size: 1.6rem;
+  /* font-weight: bold; */
+}
+
+.button-size {
+  font-size: 1.2rem;
+  padding: 7px 15px;
+  border-radius: 8px;
+  background-color: #046169;
+  color: white;
+  /* border: none; */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.container {
+  max-width: 100%;
+}
+
+.dashboard {
+  background-color: #046169;
+  color: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  animation: fadeIn 1s ease;
+  animation-delay: 0.2s;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+h1 span {
+  color: #6e8efb;
+}
+
+#taskInput {
+  border-radius: 12px;
+}
+
+.btn-primary {
+  background-color: #6e8efb;
+  border: none;
+  transition: 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #5a7dfb;
+}
+
+.list-group-item {
+  border-radius: 8px;
+  margin-top: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.text-decoration-line-through {
+  text-decoration: line-through;
+}
+
+.delete-btn {
+  background-color: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #dc3545;
+  cursor: pointer;
+}
+
+.btn-danger {
+  border-radius: 8px;
+}

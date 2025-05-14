@@ -1,0 +1,79 @@
+body {
+  height: 100vh;
+  margin: 0;
+  background: linear-gradient(-45deg, #6e8efb, #a777e3, #fcb045, #ff6b6b);
+  background-size: 400% 400%;
+  animation: gradientBG 12s ease infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes slideFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.register-box {
+  animation: slideFadeIn 1.2s ease-out;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+}
+
+.form-control:focus {
+  border-color: #6e8efb;
+  box-shadow: 0 0 0 0.2rem rgba(110, 142, 251, 0.25);
+}
+
+.btn-register {
+  background-color: #6e8efb;
+  color: white;
+}
+
+.btn-register:hover {
+  background-color: #5a7dfb;
+}
+
+.login-link a {
+  color: #6e8efb;
+  text-decoration: none;
+}
+
+@media (max-width: 576px) {
+  .register-box {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  p,
+  .form-control {
+    font-size: 0.95rem;
+  }
+}
